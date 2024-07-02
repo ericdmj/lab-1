@@ -1,0 +1,103 @@
+#map {    
+    height: 400px;    
+    width: 60%;
+    margin: auto;
+    border: 1px solid gray;
+}
+
+.sequence-control-container {  
+    width: 350px;  
+    height: 30px;  
+    background-color: rgba(255,255,255,0.8);  
+    padding: 10px;  
+    line-height: 45px;  
+    text-align: center;  
+    border: solid gray 1px;  
+}  
+
+.range-slider {  
+    width: 250px;  
+}  
+
+.step {
+    width: 40px;
+}
+
+.step img {  
+    width: 100%;
+    height:auto;
+}  
+
+#forward {  
+    float: right;  
+}  
+
+#reverse {  
+    float: left;  
+}
+
+.leaflet-popup-content p {
+    margin: 0.2em 0;
+}
+
+.legend-control-container {  
+    height: 30px;  
+    position: relative;
+    width: 250px; 
+    background-color: rgba(255,255,255,0.8);
+    border: solid gray 1px;      
+}  
+
+p.temporalLegend {
+    font-weight: 900;
+    font-size: 1em;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.pagecontent {
+    font-family:'Josefin Sans','Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.pagecontent img {
+    float: right;
+    margin: 5px;
+}
+
+#pagetitle {
+    text-align: center;
+    font-family:'Josefin Sans','Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+#pagetitle h2 {
+    font-size: 3em;
+    font-weight: 400;
+    color: #d94500;
+}
+
+#pagesubtitle {
+    text-align: center;
+    font-family:'Josefin Sans','Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+#pagesubtitle h3 {
+    font-size: 2em;
+    font-weight: 300;
+    color: #852a00;
+    margin-top:-30px;
+}
+
+.bodytext {
+    font-weight: 300;
+    font-size: 1.1em;
+    line-height: 1.4em;
+    color: rgb(77, 77, 77);
+}
+
+p.bodytext {
+    margin: 1.5% 20%;
+}

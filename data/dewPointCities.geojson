@@ -1,0 +1,325 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 27.57,
+          "dp_1970": 25.88,
+          "dp_1980": 24.52,
+          "dp_1990": 24.82,
+          "dp_2000": 30.14,
+          "dp_2010": 28.28,
+          "dp_2020": 27.9,
+          "City": "Anchorage, AK"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -149.8996,
+            61.21658
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 38.33,
+          "dp_1970": 39.06,
+          "dp_1980": 32.95,
+          "dp_1990": 35.26,
+          "dp_2000": 40.04,
+          "dp_2010": 39.52,
+          "dp_2020": 40.61,
+          "City": "Boston, MA"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -71.05863,
+            42.35899
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 38.9,
+          "dp_1970": 38.44,
+          "dp_1980": 29.84,
+          "dp_1990": 38.12,
+          "dp_2000": 39.99,
+          "dp_2010": 39.55,
+          "dp_2020": 40.63,
+          "City": "Chicago, IL"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -87.6324,
+            41.88323
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 26.1,
+          "dp_1970": 26.41,
+          "dp_1980": 26.28,
+          "dp_1990": 25.81,
+          "dp_2000": 28.42,
+          "dp_2010": 27.5,
+          "dp_2020": 26.26,
+          "City": "Colorado Springs, CO"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -104.8198,
+            38.83522
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 36.12,
+          "dp_1970": 33.63,
+          "dp_1980": 34.78,
+          "dp_1990": 33.75,
+          "dp_2000": 36.29,
+          "dp_2010": 37.79,
+          "dp_2020": 37.08,
+          "City": "Green Bay, WI"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -88.01326,
+            44.51329
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 25.03,
+          "dp_1970": 25.36,
+          "dp_1980": 27.16,
+          "dp_1990": 24.94,
+          "dp_2000": 27.02,
+          "dp_2010": 29.31,
+          "dp_2020": 27.9,
+          "City": "Helena, MT"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -112.0204,
+            46.59107
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 43.38,
+          "dp_1970": 14.92,
+          "dp_1980": 40.67,
+          "dp_1990": 43.18,
+          "dp_2000": 46.14,
+          "dp_2010": 54.43,
+          "dp_2020": 47.23,
+          "City": "Louisville, KY"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -85.75157,
+            38.25608
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 65.14,
+          "dp_1970": 65.49,
+          "dp_1980": 61.1,
+          "dp_1990": 61.5,
+          "dp_2000": 66.5,
+          "dp_2010": 63.86,
+          "dp_2020": 68.43,
+          "City": "Miami, FL"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -80.1947,
+            25.77508
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 40.78,
+          "dp_1970": 37.1,
+          "dp_1980": 38.85,
+          "dp_1990": 39.92,
+          "dp_2000": 40.44,
+          "dp_2010": 38.04,
+          "dp_2020": 37,
+          "City": "Phoenix, AZ"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -112.07258,
+            33.4482
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 55.55,
+          "dp_1970": 53.8,
+          "dp_1980": 49.26,
+          "dp_1990": 50.77,
+          "dp_2000": 56.64,
+          "dp_2010": 55.25,
+          "dp_2020": 56.49,
+          "City": "San Antonio, TX"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -98.49461,
+            29.42517
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 52.02,
+          "dp_1970": 50.31,
+          "dp_1980": 49.82,
+          "dp_1990": 46.37,
+          "dp_2000": 54,
+          "dp_2010": 51.03,
+          "dp_2020": 53.8,
+          "City": "San Diego, CA"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -117.16382,
+            32.71576
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 47.85,
+          "dp_1970": 45.97,
+          "dp_1980": 39.5,
+          "dp_1990": 42.08,
+          "dp_2000": 49.47,
+          "dp_2010": 47.99,
+          "dp_2020": 48.06,
+          "City": "San Francisco, CA"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.42016,
+            37.78008
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 41.62,
+          "dp_1970": 40.44,
+          "dp_1980": 39.07,
+          "dp_1990": 36.56,
+          "dp_2000": 43.49,
+          "dp_2010": 42.81,
+          "dp_2020": 44.28,
+          "City": "Seattle, WA"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.33028,
+            47.60323
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 43.16,
+          "dp_1970": 44.67,
+          "dp_1980": 40.72,
+          "dp_1990": 38.65,
+          "dp_2000": 46.45,
+          "dp_2010": 44.89,
+          "dp_2020": 45.35,
+          "City": "St. Louis, MO"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -90.20099,
+            38.63535
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 41.58,
+          "dp_1970": 41.42,
+          "dp_1980": 30.99,
+          "dp_1990": 42.21,
+          "dp_2000": 42.3,
+          "dp_2010": 43.19,
+          "dp_2020": 44.96,
+          "City": "Topeka, KS"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -95.67043,
+            39.05098
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "dp_1960": 43.19,
+          "dp_1970": 43.97,
+          "dp_1980": 42.74,
+          "dp_1990": 42.49,
+          "dp_2000": 45.17,
+          "dp_2010": 43.19,
+          "dp_2020": 47.97,
+          "City": "Washington, DC"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -77.01991,
+            38.89206
+          ]
+        }
+      }
+    ]
+  }
