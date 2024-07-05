@@ -1,6 +1,6 @@
 //declare vars in global scope
 var map;
-var minValue;
+var dataStats ={};
 var attributes;
 
 //function to create map
@@ -24,7 +24,7 @@ function createMap() {
     getData();
 };
 
-function calculateMinValue(data) {
+function calcStats(data) {
     //create empty array to store all data values
     var allValues = [];
     //loop through each city
@@ -37,10 +37,14 @@ function calculateMinValue(data) {
             allValues.push(value);
         }
     }
-    //get minimum value of our array
-    var minValue = Math.min(...allValues)
+    //get min, max, mean stats for our array
+    dataStats.min = Math.min(...allValues);
+    dataStats.max = Math.max(...allValues);
+    //calculate meanValue
+    var sum = allValues.reduce(function(a, b){return a+b;});
+    dataStats.mean = sum/ allValues.length;
 
-    return minValue;
+    return dataStats.min;
 }
 
 //calculate the radius of each proportional symbol
@@ -48,7 +52,7 @@ function calcPropRadius(attValue) {
     //constant factor adjusts symbol sizes evenly
     var minRadius = 5;
     //Flannery Apperance Compensation formula
-    var radius = 1.0083 * Math.pow(attValue / minValue, 0.5715) * minRadius
+    var radius = 1.0083 * Math.pow(attValue / dataStats.min, 0.5715) * minRadius
 
     return radius;
 };
@@ -69,6 +73,24 @@ function pointToLayer(feature, latlng, attributes) {
     //Determine the attribute for scaling the proportional symbols
     var attribute = attributes[0];
 
+    //For each feature, determine its value for the selected attribute
+    var attValue = Number(feature.properties[attribute]);
+
+    var filterValue = document.querySelector('input[name="filter"]:checked')?.value || 'all';
+
+    var shouldDisplay = false;
+    if (filterValue === 'all') {
+        shouldDisplay = true;
+    } else if (filterValue === 'below30' && dewpoint < 30) {
+        shouldDisplay = true;
+    } else if (filterValue === 'between30and499' && dewpoint >= 30 && dewpoint <= 49.9) {
+        shouldDisplay = true;
+    } else if (filterValue === '50andabove' && dewpoint >= 50) {
+        shouldDisplay = true;
+    }
+
+    if (!shouldDisplay) return null;
+
     //create marker options
     var geojsonMarkerOptions = {
         fillColor: "#00827D",
@@ -78,8 +100,7 @@ function pointToLayer(feature, latlng, attributes) {
         fillOpacity: 0.75
     };
 
-    //For each feature, determine its value for the selected attribute
-    var attValue = Number(feature.properties[attribute]);
+    
 
     //Give each feature's circle marker a radius based on its attribute value
     geojsonMarkerOptions.radius = calcPropRadius(attValue);
@@ -110,6 +131,9 @@ function createPropSymbols(data, attributes) {
     L.geoJson(data, {
         pointToLayer: function (feature, latlng) {
             return pointToLayer(feature, latlng, attributes);
+        },
+        filter: function(feature) {
+            return attributes.some(attr => feature.properties[attr] !== undefined);
         }
     }).addTo(map);
 };
@@ -119,24 +143,44 @@ function updatePropSymbols(attribute) {
     var year = attribute.split("_")[1];
     //update temporal legend
     document.querySelector("span.year").innerHTML = year;
+
+    var filterValue = document.querySelector('input[name="filter"]:checked')?.value || 'all';
+
     map.eachLayer(function (layer) {
-        if (layer.feature && layer.feature.properties[attribute]) {
+        if (layer.feature && layer.feature.properties[attribute] !== undefined) {
             //access feature properties
-            var props = layer.feature.properties;
+            var dewpoint = layer.feature.properties[attribute];
 
-            //update each feature's radius based on new attribute values
-            var radius = calcPropRadius(props[attribute]);
-            layer.setRadius(radius);
+            var shouldDisplay = false;
+            if (filterValue === 'all') {
+                shouldDisplay = true;
+            } else if (filterValue === 'below30' && dewpoint < 30) {
+                shouldDisplay = true;
+            } else if (filterValue === 'between30and499' && dewpoint >= 30 && dewpoint <= 49.9) {
+                shouldDisplay = true;
+            } else if (filterValue === '50andabove' && dewpoint >= 50) {
+                shouldDisplay = true;
+            }
 
-            //create new popup content
-            var popupContent = new PopupContent(props, attribute);
+            if (shouldDisplay) {
 
-            //change the formatting
-            popupContent.formatted = "<h3>" + popupContent.properties.City + "<br />" + popupContent.dewpoint + "°F</h3>";
+                //update each feature's radius based on new attribute values
+                var radius = calcPropRadius(dewpoint);
+                layer.setRadius(radius);
 
-            //update popup content            
-            popup = layer.getPopup();
-            popup.setContent(popupContent.formatted).update();
+                //create new popup content
+                var popupContent = new PopupContent(layer.feature.properties, attribute);
+
+                //change the formatting
+                popupContent.formatted = "<h3>" + popupContent.properties.City + "<br />" + popupContent.dewpoint + "°F</h3>";
+
+                //update popup content            
+                var popup = layer.getPopup();
+                popup.setContent(popupContent.formatted).update();
+                layer.addTo(map);
+            } else {
+                map.removeLayer(layer);
+            }
 
         };
     });
@@ -222,7 +266,36 @@ function createLegend(attributes){
             // create the control container with a particular class name
             var container = L.DomUtil.create('div', 'legend-control-container');
 
-            container.insertAdjacentHTML('beforeend', '<p class="temporalLegend">Dew point in <span class="year">1960</span></p>');
+            container.innerHTML = '<p class="temporalLegend">Average dew point in <span class="year">1960</span></p>';
+
+            //Step 1: start attribute legend svg string
+            var svg = '<svg id="attribute-legend" width="160px" height="60px">';
+
+            //array of circle names to base loop on
+            var circles = ["max", "mean", "min"];
+
+            //Step 2: loop to add each circle and text to svg string  
+            for (var i=0; i<circles.length; i++){  
+
+                //Step 3: assign the r and cy attributes  
+                var radius = calcPropRadius(dataStats[circles[i]]);  
+                var cy = 59 - radius;  
+
+                //circle string            
+                svg += '<circle class="legend-circle" id="' + circles[i] + '" r="' + radius + '"cy="' + cy + '" fill="#00827D" fill-opacity="0.75" stroke="#000000" cx="65"/>';
+
+                //evenly space out labels            
+                var textY = i * 20 + 20;            
+
+                //text string            
+                svg += '<text id="' + circles[i] + '-text" x="85" y="' + textY + '">' + Math.round(dataStats[circles[i]]*100)/100 + "°F" + '</text>';
+            };
+
+            //close svg string
+            svg += "</svg>";
+
+            //add attribute legend svg to container
+            container.insertAdjacentHTML('beforeend',svg);
 
             return container;
         }
@@ -231,6 +304,63 @@ function createLegend(attributes){
     map.addControl(new LegendControl());
 };
 
+
+function createFilterControls() {
+    var FilterControl = L.Control.extend({
+        options: {
+            position: 'topright'
+        },
+
+        onAdd: function () {
+            var container = L.DomUtil.create('div', 'filter-control-container');
+
+            container.innerHTML = `
+                <form>
+                    <label><input type="radio" name="filter" value="all" checked> All Data</label><br>
+                    <label><input type="radio" name="filter" value="below30"> &lt; 30°F</label><br>
+                    <label><input type="radio" name="filter" value="between30and499"> 30°F - 49.9°F</label><br>
+                    <label><input type="radio" name="filter" value="50andabove"> 50°F and above</label>
+                </form>
+            `;
+
+            container.addEventListener('change', function () {
+                updatePropSymbols(attributes[document.querySelector('.range-slider').value]);
+            });
+
+            //disable any mouse event listeners for the container
+            L.DomEvent.disableClickPropagation(container);
+
+            return container;
+        }
+    });
+
+    map.addControl(new FilterControl());
+
+}
+
+//Import GeoJSON data
+function getData() {
+
+    //load the data
+    fetch("data/dewPointCities.geojson")
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (json) {
+            //update the global attributes array
+            attributes = processData(json);
+            //calling our renamed function  
+            calcStats(json); 
+            //call function to create proportional symbols
+            createPropSymbols(json, attributes);
+            //call function to create sequence controls
+            createSequenceControls();
+            //call function to create filter controls
+            createFilterControls();
+            //call function to create legend
+            createLegend();
+        })
+};
 
 //build an attributes array from the data
 function processData(data) {
@@ -251,26 +381,6 @@ function processData(data) {
     return attributes;
 };
 
-//Import GeoJSON data
-function getData() {
 
-    //load the data
-    fetch("data/dewPointCities.geojson")
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (json) {
-            //update the global attributes array
-            attributes = processData(json);
-            //calculate minimum data value
-            minValue = calculateMinValue(json);
-            //call function to create proportional symbols
-            createPropSymbols(json, attributes);
-            //call function to create sequence controls
-            createSequenceControls();
-            //call function to create legend
-            createLegend();
-        })
-};
 
 document.addEventListener('DOMContentLoaded', createMap)

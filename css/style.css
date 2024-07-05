@@ -41,22 +41,18 @@
 }
 
 .legend-control-container {  
-    height: 30px;  
+    height: auto;  
     position: relative;
     width: 250px; 
     background-color: rgba(255,255,255,0.8);
-    border: solid gray 1px;      
+    border: solid gray 1px;
+    text-align: center;   
 }  
 
 p.temporalLegend {
     font-weight: 900;
     font-size: 1em;
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+
 }
 
 .pagecontent {
@@ -101,3 +97,18 @@ p.temporalLegend {
 p.bodytext {
     margin: 1.5% 20%;
 }
+
+.cls-1 {
+    fill: #00827d;
+    opacity: .75;
+    stroke: #231f20;
+    stroke-miterlimit: 10;
+}
+
+.filter-control-container {  
+    height: auto;  
+    width: 250px; 
+    background-color: rgba(255,255,255,0.8);
+    border: solid gray 1px;
+    text-align: center;   
+}  
