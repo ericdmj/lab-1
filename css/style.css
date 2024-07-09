@@ -1,13 +1,25 @@
+body {
+    
+    background-image: url('../img/condensation.jpg');
+    background-size: 400px;
+}
+
 #map {    
-    height: 400px;    
+    height: 450px;    
     width: 60%;
     margin: auto;
     border: 1px solid gray;
 }
 
+#mapcaption {
+    font-style:italic;
+    font-size:smaller;
+    padding: 0% 20%;
+}
+
 .sequence-control-container {  
-    width: 350px;  
-    height: 30px;  
+    width: 250px;  
+    height: 60px;  
     background-color: rgba(255,255,255,0.8);  
     padding: 10px;  
     line-height: 45px;  
@@ -15,8 +27,13 @@
     border: solid gray 1px;  
 }  
 
+.sequenceTitle {
+    margin: -10px;
+    font-weight: bold;
+}
+
 .range-slider {  
-    width: 250px;  
+    width: 150px;  
 }  
 
 .step {
@@ -43,7 +60,7 @@
 .legend-control-container {  
     height: auto;  
     position: relative;
-    width: 250px; 
+    width: 200px; 
     background-color: rgba(255,255,255,0.8);
     border: solid gray 1px;
     text-align: center;   
@@ -51,17 +68,31 @@
 
 p.temporalLegend {
     font-weight: 900;
-    font-size: 1em;
+    font-size: 1.1em;
 
+}
+
+#attribute-legend {
+    margin-top:-15px;
+    font-size: 11px;
 }
 
 .pagecontent {
     font-family:'Josefin Sans','Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    padding: 0% 20%;
+    font-weight: 400;
+    font-size: 1.1em;
+    line-height: 1.4em;
+    color: rgb(77, 77, 77);
 }
 
 .pagecontent img {
     float: right;
     margin: 5px;
+}
+
+.pagecontent h3 {
+    margin-top: 30px;
 }
 
 #pagetitle {
@@ -87,17 +118,6 @@ p.temporalLegend {
     margin-top:-30px;
 }
 
-.bodytext {
-    font-weight: 300;
-    font-size: 1.1em;
-    line-height: 1.4em;
-    color: rgb(77, 77, 77);
-}
-
-p.bodytext {
-    margin: 1.5% 20%;
-}
-
 .cls-1 {
     fill: #00827d;
     opacity: .75;
@@ -105,10 +125,25 @@ p.bodytext {
     stroke-miterlimit: 10;
 }
 
-.filter-control-container {  
+.color-mode-control-container {
     height: auto;  
-    width: 250px; 
+    width: 125px; 
     background-color: rgba(255,255,255,0.8);
     border: solid gray 1px;
-    text-align: center;   
-}  
+    text-align: left;  
+    padding: 5px; 
+    font-weight: bold;
+}
+
+#color-mode-button {
+    font-style: italic;
+    font-weight:900;
+    border-radius: 8px;
+    transition-duration: 0.3s;
+}
+
+#color-mode-button:hover {
+    background-color: #00827D;
+    color: white;
+}
+

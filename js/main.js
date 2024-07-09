@@ -2,13 +2,14 @@
 var map;
 var dataStats ={};
 var attributes;
+var colorMode = false; // variable to track color mode
 
 //function to create map
 function createMap() {
 
     //create the map
     map = L.map('map', {
-        center: [45, -100],
+        center: [45, -98],
         zoom: 3
     });
 
@@ -50,13 +51,12 @@ function calcStats(data) {
 //calculate the radius of each proportional symbol
 function calcPropRadius(attValue) {
     //constant factor adjusts symbol sizes evenly
-    var minRadius = 5;
+    var minRadius = 7;
     //Flannery Apperance Compensation formula
     var radius = 1.0083 * Math.pow(attValue / dataStats.min, 0.5715) * minRadius
 
     return radius;
 };
-
 
 function PopupContent(properties, attribute){
     this.properties = properties;
@@ -66,30 +66,11 @@ function PopupContent(properties, attribute){
     this.formatted = "<p><b>City:</b> " + this.properties.City + "</p><p><b>Average dew point in " + this.year + ":</b> " + this.dewpoint + "°F</p>";
 };
 
-
 //function to convert markers to circle markers
 function pointToLayer(feature, latlng, attributes) {
 
     //Determine the attribute for scaling the proportional symbols
     var attribute = attributes[0];
-
-    //For each feature, determine its value for the selected attribute
-    var attValue = Number(feature.properties[attribute]);
-
-    var filterValue = document.querySelector('input[name="filter"]:checked')?.value || 'all';
-
-    var shouldDisplay = false;
-    if (filterValue === 'all') {
-        shouldDisplay = true;
-    } else if (filterValue === 'below30' && dewpoint < 30) {
-        shouldDisplay = true;
-    } else if (filterValue === 'between30and499' && dewpoint >= 30 && dewpoint <= 49.9) {
-        shouldDisplay = true;
-    } else if (filterValue === '50andabove' && dewpoint >= 50) {
-        shouldDisplay = true;
-    }
-
-    if (!shouldDisplay) return null;
 
     //create marker options
     var geojsonMarkerOptions = {
@@ -100,7 +81,8 @@ function pointToLayer(feature, latlng, attributes) {
         fillOpacity: 0.75
     };
 
-    
+    //For each feature, determine its value for the selected attribute
+    var attValue = Number(feature.properties[attribute]);
 
     //Give each feature's circle marker a radius based on its attribute value
     geojsonMarkerOptions.radius = calcPropRadius(attValue);
@@ -131,9 +113,6 @@ function createPropSymbols(data, attributes) {
     L.geoJson(data, {
         pointToLayer: function (feature, latlng) {
             return pointToLayer(feature, latlng, attributes);
-        },
-        filter: function(feature) {
-            return attributes.some(attr => feature.properties[attr] !== undefined);
         }
     }).addTo(map);
 };
@@ -143,48 +122,56 @@ function updatePropSymbols(attribute) {
     var year = attribute.split("_")[1];
     //update temporal legend
     document.querySelector("span.year").innerHTML = year;
-
-    var filterValue = document.querySelector('input[name="filter"]:checked')?.value || 'all';
-
     map.eachLayer(function (layer) {
-        if (layer.feature && layer.feature.properties[attribute] !== undefined) {
+        if (layer.feature && layer.feature.properties[attribute]) {
             //access feature properties
-            var dewpoint = layer.feature.properties[attribute];
+            var props = layer.feature.properties;
 
-            var shouldDisplay = false;
-            if (filterValue === 'all') {
-                shouldDisplay = true;
-            } else if (filterValue === 'below30' && dewpoint < 30) {
-                shouldDisplay = true;
-            } else if (filterValue === 'between30and499' && dewpoint >= 30 && dewpoint <= 49.9) {
-                shouldDisplay = true;
-            } else if (filterValue === '50andabove' && dewpoint >= 50) {
-                shouldDisplay = true;
-            }
+            //update each feature's radius based on new attribute values
+            var radius = calcPropRadius(props[attribute]);
+            layer.setRadius(radius);
 
-            if (shouldDisplay) {
+            //create new popup content
+            var popupContent = new PopupContent(props, attribute);
 
-                //update each feature's radius based on new attribute values
-                var radius = calcPropRadius(dewpoint);
-                layer.setRadius(radius);
+            //change the formatting
+            popupContent.formatted = "<h3>" + popupContent.properties.City + "<br />" + popupContent.dewpoint + "°F</h3>";
 
-                //create new popup content
-                var popupContent = new PopupContent(layer.feature.properties, attribute);
+            //update popup content            
+            var popup = layer.getPopup();
+            popup.setContent(popupContent.formatted).update();
 
-                //change the formatting
-                popupContent.formatted = "<h3>" + popupContent.properties.City + "<br />" + popupContent.dewpoint + "°F</h3>";
-
-                //update popup content            
-                var popup = layer.getPopup();
-                popup.setContent(popupContent.formatted).update();
-                layer.addTo(map);
+            //update marker color if colorMode is active
+            if (colorMode) {
+                var color = getColor(props[attribute]);
+                layer.setStyle({ fillColor: color });
             } else {
-                map.removeLayer(layer);
+                layer.setStyle({ fillColor: "#00827D" });
             }
-
         };
     });
 };
+
+// Create a function to determine the color based on dew point value
+function getColor(dewpoint) {
+    if (dewpoint < 20) {
+        return "#003f5c";
+    } else if (dewpoint >= 20 && dewpoint <= 29.9) {
+        return "#374c80";
+    } else if (dewpoint >= 30 && dewpoint <= 39.9) {
+        return "#7a5195";
+    } else if (dewpoint >= 40 && dewpoint <= 49.9) {
+        return "#bc5090";
+    } else if (dewpoint >= 50 && dewpoint <= 59.9) {
+        return "#ef5675";
+    } else if (dewpoint >= 60 && dewpoint <= 69.9) {
+        return "#ff764a";
+    } else if (dewpoint >= 70) {
+        return "#ffa600";
+    } else {
+        return "#00827D"; // Default color
+    }
+}
 
 //Create new sequence controls
 function createSequenceControls() {
@@ -197,6 +184,8 @@ function createSequenceControls() {
         onAdd: function () {
             // create the control container div with a particular class name
             var container = L.DomUtil.create('div', 'sequence-control-container');
+
+            container.innerHTML = '<p class="sequenceTitle">View by decade, 1960-2020</p>';
 
             //create range input element (slider)
             container.insertAdjacentHTML('beforeend', '<input class="range-slider" type="range">')
@@ -255,21 +244,20 @@ function createSequenceControls() {
     });
 };
 
-
 function createLegend(attributes){
     var LegendControl = L.Control.extend({
         options: {
-            position: 'bottomright'
+            position: 'topright'
         },
 
         onAdd: function () {
             // create the control container with a particular class name
             var container = L.DomUtil.create('div', 'legend-control-container');
 
-            container.innerHTML = '<p class="temporalLegend">Average dew point in <span class="year">1960</span></p>';
+            container.innerHTML = '<p class="temporalLegend">Average dew point<br />in <span class="year">1960</span></p>';
 
             //Step 1: start attribute legend svg string
-            var svg = '<svg id="attribute-legend" width="160px" height="60px">';
+            var svg = '<svg id="attribute-legend" width="160px" height="70px">';
 
             //array of circle names to base loop on
             var circles = ["max", "mean", "min"];
@@ -285,7 +273,7 @@ function createLegend(attributes){
                 svg += '<circle class="legend-circle" id="' + circles[i] + '" r="' + radius + '"cy="' + cy + '" fill="#00827D" fill-opacity="0.75" stroke="#000000" cx="65"/>';
 
                 //evenly space out labels            
-                var textY = i * 20 + 20;            
+                var textY = i * 15 + 25;            
 
                 //text string            
                 svg += '<text id="' + circles[i] + '-text" x="85" y="' + textY + '">' + Math.round(dataStats[circles[i]]*100)/100 + "°F" + '</text>';
@@ -304,29 +292,40 @@ function createLegend(attributes){
     map.addControl(new LegendControl());
 };
 
-
-function createFilterControls() {
-    var FilterControl = L.Control.extend({
+//Create color mode control
+function createColorModeControl() {
+    var ColorModeControl = L.Control.extend({
         options: {
-            position: 'topright'
+            position: 'bottomright'
         },
 
         onAdd: function () {
-            var container = L.DomUtil.create('div', 'filter-control-container');
+            // create the control container with a particular class name
+            var container = L.DomUtil.create('div', 'color-mode-control-container');
 
-            container.innerHTML = `
-                <form>
-                    <label><input type="radio" name="filter" value="all" checked> All Data</label><br>
-                    <label><input type="radio" name="filter" value="below30"> &lt; 30°F</label><br>
-                    <label><input type="radio" name="filter" value="between30and499"> 30°F - 49.9°F</label><br>
-                    <label><input type="radio" name="filter" value="50andabove"> 50°F and above</label>
-                </form>
+            //create button
+            container.insertAdjacentHTML('beforeend', '<button id="color-mode-button">Toggle Color Mode</button>');
+
+            //create SVG with blue and red circles and labels
+            var svg = `
+                <svg width="120" height="150">
+                    <circle cx="20" cy="15" r="6" fill="#3288bd" />
+                    <text x="30" y="19" font-size="10" fill="black">Dew point &lt; 20°F</text>
+                    <circle cx="20" cy="35" r="6" fill="#374c80" />
+                    <text x="30" y="39" font-size="10" fill="black">20°F - 29.9°F</text>
+                    <circle cx="20" cy="55" r="6" fill="#7a5195" />
+                    <text x="30" y="59" font-size="10" fill="black">30°F - 39.9°F</text>
+                    <circle cx="20" cy="75" r="6" fill="#bc5090" />
+                    <text x="30" y="79" font-size="10" fill="black">40°F - 49.9°F</text>
+                    <circle cx="20" cy="95" r="6" fill="#ef5675" />
+                    <text x="30" y="99" font-size="10" fill="black">50°F - 59.9°F</text>
+                    <circle cx="20" cy="115" r="6" fill="#ff764a" />
+                    <text x="30" y="119" font-size="10" fill="black">60°F - 69.9°F</text>
+                    <circle cx="20" cy="135" r="6" fill="#ffa600" />
+                    <text x="30" y="139" font-size="10" fill="black">&#8805; 70°F</text>
+                </svg>
             `;
-
-            container.addEventListener('change', function () {
-                updatePropSymbols(attributes[document.querySelector('.range-slider').value]);
-            });
-
+            container.insertAdjacentHTML('beforeend', svg);
             //disable any mouse event listeners for the container
             L.DomEvent.disableClickPropagation(container);
 
@@ -334,33 +333,16 @@ function createFilterControls() {
         }
     });
 
-    map.addControl(new FilterControl());
+    map.addControl(new ColorModeControl());
 
+    //add click listener for button
+    document.getElementById("color-mode-button").addEventListener("click", function() {
+        colorMode = !colorMode; // toggle color mode
+        // update symbols with the current attribute
+        var index = document.querySelector('.range-slider').value;
+        updatePropSymbols(attributes[index]);
+    });
 }
-
-//Import GeoJSON data
-function getData() {
-
-    //load the data
-    fetch("data/dewPointCities.geojson")
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (json) {
-            //update the global attributes array
-            attributes = processData(json);
-            //calling our renamed function  
-            calcStats(json); 
-            //call function to create proportional symbols
-            createPropSymbols(json, attributes);
-            //call function to create sequence controls
-            createSequenceControls();
-            //call function to create filter controls
-            createFilterControls();
-            //call function to create legend
-            createLegend();
-        })
-};
 
 //build an attributes array from the data
 function processData(data) {
@@ -381,6 +363,28 @@ function processData(data) {
     return attributes;
 };
 
+//Import GeoJSON data
+function getData(map) {
 
+    //load the data
+    fetch("data/dewPointCities.geojson")
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (json) {
+            //update the global attributes array
+            attributes = processData(json);
+            //calling our renamed function  
+            calcStats(json); 
+            //call function to create proportional symbols
+            createPropSymbols(json, attributes);
+            //call function to create sequence controls
+            createSequenceControls();
+            //call function to create legend
+            createLegend();
+            //call function to create color mode control
+            createColorModeControl();
+        })
+};
 
-document.addEventListener('DOMContentLoaded', createMap)
+document.addEventListener('DOMContentLoaded', createMap);
